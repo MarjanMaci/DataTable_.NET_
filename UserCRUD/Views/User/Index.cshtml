@@ -1,0 +1,459 @@
+﻿@model UserCRUD.Models.User
+@{
+    ViewBag.Title = "View";
+}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.css">
+    <style>
+        ul {
+            list-style-type: none;
+        }
+
+        li {
+            padding: 5px 20px;
+            border: 1px solid #2e6da4;
+            background-color: #337ab7;
+            color: white;
+            border-radius: 5%;
+        }
+
+        .nav li {
+            padding: 0px;
+            border: 0px;
+            background-color: #333333;
+            color: #9d9d9d;
+            border-radius: 0%;
+        }
+
+        .row {
+            display: flex;
+            margin-bottom: 2%;
+            margin-top: 2%;
+            justify-content: flex-start;
+        }
+
+        .col {
+            padding: 0% 2%;
+        }
+
+        #list-last-users{
+            width:15%;
+        }
+
+        .ui-state-focus {
+            background-color: darkslateblue;
+            outline: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Above Table Div -->
+
+    <div class="row">
+        <div class="col">
+            <button id="add-user" class="btn btn-primary">Add User</button>
+        </div>
+        <div class="col">
+            <input type="date" id="date-from" />
+            <input type="date" id="date-to" />
+            <button class="btn btn-primary" id="submit-date-filter">Filter Users</button>
+        </div>
+    </div>
+
+    <!-- Data table -->
+
+    <table id="table" class="table table-bordered table-dark table-condensed table-hover table-striped context-menu-one">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Username</th>
+                <th>Full name</th>
+                <th>Email</th>
+                <th>Buttons</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <!-- Add modal -->
+
+    <div class="modal" id="editModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                @using (Html.BeginForm(new { @id = "modalForm" }))
+                {
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="Id">Id</label>
+                            @Html.TextBoxFor(m => m.Id, new { @class = "form-control", id = "Id", placeholder = "Enter ID", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group">
+                            <label for="Fullname">Full Name</label>
+                            @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", id = "FullName", placeholder = "Enter Full Name" })
+                        </div>
+                        <div class="form-group">
+                            <label for="UserName">User Name</label>
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", id = "UserName", placeholder = "Enter User Name" })
+                        </div>
+                        <div class="form-group">
+                            <label for="Password">Password</label>
+                            @Html.TextBoxFor(m => m.Password, new { @class = "form-control", id = "Password", placeholder = "Enter Password", @type = "password" })
+                        </div>
+                        <div class="form-group">
+                            <label for="Email">Email</label>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", id = "Email", placeholder = "Enter Email", @type = "email" })
+                        </div>
+                        <div class="form-group">
+                            <label for="Comment">Comment</label>
+                            @Html.TextBoxFor(m => m.Comment, new { @class = "form-control", id = "Comment", placeholder = "Enter Comment" })
+                        </div>
+                    </div>
+                }
+                <div class="modal-footer">
+                    <button type="submit" id="modal-submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+
+    <div class="modal" id="editModalE" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                @using (Html.BeginForm(new { @id = "modalFormE" }))
+                {
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="Id">Id</label>
+                            @Html.TextBoxFor(m => m.Id, new { @class = "form-control", id = "IdE", placeholder = "ID AutoFilled", @readonly = "readonly" })
+                        </div>
+                        <div class="form-group">
+                            <label for="Fullname">Full Name</label>
+                            @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", id = "FullNameE", placeholder = "Enter Full Name" })
+                        </div>
+                        <div class="form-group">
+                            <label for="UserName">User Name</label>
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", id = "UserNameE", placeholder = "Enter User Name" })
+                        </div>
+                        <div class="form-group">
+                            <label for="Password">Password</label>
+                            @Html.TextBoxFor(m => m.Password, new { @class = "form-control", id = "PasswordE", placeholder = "Enter Password", @type = "password" })
+                        </div>
+                        <div class="form-group">
+                            <label for="Email">Email</label>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", id = "EmailE", placeholder = "Enter Email", @type = "email" })
+                        </div>
+                        <div class="form-group">
+                            <label for="Comment">Comment</label>
+                            @Html.TextBoxFor(m => m.Comment, new { @class = "form-control", id = "CommentE", placeholder = "Enter Comment" })
+                        </div>
+                    </div>
+                }
+                <div class="modal-footer">
+                    <button type="submit" id="modal-submitE" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Last 10 users div -->
+    <div>
+        <h3>Last 10 Users Added</h3>
+        <ul id="list-last-users">
+        </ul>
+    </div>
+</body>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            //parsing data
+            $.ajax({
+                type: "GET",
+                url: "/User/GetUserList",
+                dataType: "json",
+                success: function (json) {
+                    var tr;
+                    console.log(json)
+                    for (var i = 0; i < json.data.length; i++) {
+                        tr = $("<tr data-id='" + json.data[i].Id + "'/>");
+                        tr.append("<td data-id='" + json.data[i].Id + "'>" + json.data[i].Id + "</td>");
+                        tr.append("<td data-id='" + json.data[i].Id + "'>" + json.data[i].UserName + "</td>");
+                        tr.append("<td data-id='" + json.data[i].Id + "'>" + json.data[i].FullName + "</td>");
+                        tr.append("<td data-id='" + json.data[i].Id + "'>" + json.data[i].Email + "</td>");
+                        tr.append("<td data-id='" + json.data[i].Id + "'>" + "<button style='display:none' data-id='" + json.data[i].Id + "'" + "id='delete' class='js-delete btn btn-primary'>Delete</button><button style='display:none' data-id='" + json.data[i].Id + "'" + "id='edit' class='js-edit btn btn-primary'>Edit</button></td > ");
+                        $('tbody').append(tr);
+                    }
+
+                    //making datatable
+                    var table = $("#table").DataTable();
+
+                    //last 10 users
+                    $.ajax({
+                        type: "GET",
+                        url: "/User/GetLastUsers",
+                        dataType: "json",
+                        success: function (json) {
+                            var li;
+                            console.log(json)
+                            for (var i = 0; i < json.data.length; i++) {
+                                li = $("<li>" + json.data[i].UserName + "</li>");
+                                console.log(li)
+                                $('#list-last-users').append(li);
+                            }
+                        }
+                    })
+
+                    //edit modal get
+                    $('#table .js-edit').click(function () {
+                        var button = $(this);
+                        console.log(button)
+                        $.ajax({
+                            url: "/User/GetUser/" + button.attr("data-id"),
+                            method: "get",
+                            success: function (json) {
+                                console.log(json)
+                                $(".modal-body #IdE").val(json.data.Id);
+                                $(".modal-body #FullNameE").val(json.data.FullName);
+                                $(".modal-body #UserNameE").val(json.data.UserName);
+                                $(".modal-body #PasswordE").val(json.data.Password);
+                                $(".modal-body #EmailE").val(json.data.Email);
+                                $(".modal-body #CommentE").val(json.data.Comment);
+                            },
+                            error: function (err) {
+                                console.log(err);
+                            }
+                        })
+                        $('#editModalE').modal('show');
+                    });
+
+                    //edit modal post
+                    $("#modal-submitE").click(function () {
+                        var person = new Object();
+                        person.Id = $("#IdE").val();
+                        person.FullName = $("#FullNameE").val();
+                        person.UserName = $("#UserNameE").val();
+                        person.Password = $("#PasswordE").val();
+                        person.Email = $("#EmailE").val();
+                        person.Comment = $("#CommentE").val();
+
+                        $.ajax({
+                            url: "/User/UpdateUser",
+                            type: "POST",
+                            cache: false,
+                            data: JSON.stringify({ userce: person }),
+                            contentType: "application/json; charset=utf-8",
+                            success: function (response) {
+                                $("#editModalE").modal("hide");
+                                window.location.reload();
+                            },
+                            failure: function (response) {
+                                alert(response.responseText);
+                            },
+                            error: function (response) {
+                                alert(response.responseText);
+                            }
+                        });
+                    });
+
+                    //delete user
+                    $("#table .js-delete").on("click", function () {
+                        var button = $(this);
+                        console.log(button)
+                        bootbox.confirm("Do you want to delete this row?", function (result) {
+                            if (result) {
+                                $.ajax({
+                                    url: "/User/DeleteUser/" + button.attr("data-id"),
+                                    method: "get",
+                                    success: function () {
+                                        table.row(button.parents("tr")).remove().draw();
+                                        window.location.reload();
+                                    },
+                                    error: function (err) {
+                                        console.log(err);
+                                    }
+                                })
+                            }
+                        })
+
+                    })
+                }
+            });
+
+            //add user get
+            $('#add-user').click(function () {
+                $('#editModal').modal('show');
+            });
+
+            //add user post
+            $("#modal-submit").click(function () {
+                var person = new Object();
+                person.Id = $("#Id").val();
+                person.FullName = $("#FullName").val();
+                person.UserName = $("#UserName").val();
+                person.Password = $("#Password").val();
+                person.Email = $("#Email").val();
+                person.Comment = $("#Comment").val();
+
+                $.ajax({
+                    url: "/User/InsertUser",
+                    type: "POST",
+                    cache: false,
+                    data: JSON.stringify({ userce: person }),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        $("#editModal").modal("hide");
+                        window.location.reload();
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+            //selectable datatable
+            $('#table tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $('.selected #edit').css("display", "none");
+                    $('.selected #delete').css("display", "none");
+                    $(this).removeClass('selected');
+                }
+                else {
+                    $('tr.selected').removeClass('selected');
+                    $('tr #edit').css("display", "none");
+                    $('tr #delete').css("display", "none");
+                    $(this).addClass('selected');
+                    $('.selected #edit').css("display", "inline");
+                    $('.selected #delete').css("display", "inline");
+                }
+            });
+
+            //date-filter
+            $('#submit-date-filter').click(function () {
+                var x = new Object();
+                x.odKoga = $("#date-from").val();
+                x.doKoga = $("#date-to").val();
+                $.ajax({
+                    //parsing data
+                    type: "POST",
+                    url: "/User/FilterUsers",
+                    data: JSON.stringify({ t: x }),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (json) {
+                        if (json.data.length != 0) {
+                            $("#table .odd").remove();
+                            $("#table .even").remove();
+                            var tr;
+                            console.log(json)
+                            for (var i = 0; i < json.data.length; i++) {
+                                tr = $("<tr data-id='" + json.data[i].Id + "'/>");
+                                tr.append("<td data-id='" + json.data[i].Id + "'>" + json.data[i].Id + "</td>");
+                                tr.append("<td data-id='" + json.data[i].Id + "'>" + json.data[i].UserName + "</td>");
+                                tr.append("<td data-id='" + json.data[i].Id + "'>" + json.data[i].FullName + "</td>");
+                                tr.append("<td data-id='" + json.data[i].Id + "'>" + json.data[i].Email + "</td>");
+                                tr.append("<td data-id='" + json.data[i].Id + "'>" + "<button style='display:none' data-id='" + json.data[i].Id + "'" + "id='delete' class='js-delete btn btn-primary'>Delete</button><button style='display:none' data-id='" + json.data[i].Id + "'" + "id='edit' class='js-edit btn btn-primary'>Edit</button></td > ");
+                                $('tbody').append(tr);
+                            }
+                        } else {
+                            $("#table .odd").remove();
+                            $("#table .even").remove();
+                            bootbox.alert("No user found with the specific filter!");
+                        }
+                    }
+                })
+            })
+        });
+
+    </script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/bootstrap.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.js"></script>
+    <script src="//cdn.datatables.net/colreorder/1.1.2/js/dataTables.colReorder.min.js"></script>
+    <script src="//cdn.datatables.net/plug-ins/725b2a2115b/api/fnFilterClear.js"></script>
+    <script src="//cdn.jsdelivr.net/jquery.ui-contextmenu/1.7.0/jquery.ui-contextmenu.min.js"></script>
+    <script>
+        //context menu libraries
+        //context menu
+        $(document).ready(function () {
+            $(document).contextmenu({
+                delegate: ".dataTable td",
+                menu: [
+                    { title: "Delete", cmd: "delete"},
+                    { title: "Edit", cmd: "edit" }
+                ],
+                select: function (event, ui) {
+                    console.log($(ui.target).data('id'))
+                    switch (ui.cmd) {
+                        case "delete":
+                            bootbox.confirm("Do you want to delete this row?", function (result) {
+                                if (result) {
+                                    $.ajax({
+                                        url: "/User/DeleteUser/" + $(ui.target).data('id'),
+                                        method: "get",
+                                        success: function () {
+                                            $(ui.target).parent().remove();
+                                            window.location.reload();
+                                        },
+                                        error: function (err) {
+                                            console.log(err);
+                                        }
+                                    })
+                                }
+                            })
+                            break;
+                        case "edit":
+                            $.ajax({
+                                url: "/User/GetUser/" + $(ui.target).data('id'),
+                                method: "get",
+                                success: function (json) {
+                                    console.log(json)
+                                    $(".modal-body #IdE").val(json.data.Id);
+                                    $(".modal-body #FullNameE").val(json.data.FullName);
+                                    $(".modal-body #UserNameE").val(json.data.UserName);
+                                    $(".modal-body #PasswordE").val(json.data.Password);
+                                    $(".modal-body #EmailE").val(json.data.Email);
+                                    $(".modal-body #RegisteredAtE").val(json.data.RegisteredAt);
+                                    $(".modal-body #CommentE").val(json.data.Comment);
+                                    $('#editModalE').modal('show');
+                                },
+                                error: function (err) {
+                                    console.log(err);
+                                }
+                            })
+                            break;
+                    }
+                },
+                beforeOpen: function (event, ui) {
+                    var $menu = ui.menu,
+                        $target = ui.target
+                    ui.menu.zIndex(0);
+                }
+            });
+        });
+    </script>
+}
